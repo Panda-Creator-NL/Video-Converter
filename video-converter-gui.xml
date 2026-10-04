@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>VideoConverterGUI</Name>
+  <Repository>videoconvertergui:latest</Repository>
+  <Registry/>
+  <Network>bridge</Network>
+  <MyIP/>
+  <MyMAC/>
+  <Shell>bash</Shell>
+  <Privileged>false</Privileged>
+  <Support/>
+  <Project/>
+  <ReadMe/>
+  <Overview>Simpele WebGUI die een map scant en alle video's converteert via FFmpeg naar het gewenste formaat, en deze naast het origineel opslaat.</Overview>
+  <Category>MediaApp:Video</Category>
+  <WebUI>http://[IP]:[PORT:5053]</WebUI>
+  <TemplateURL/>
+  <Icon>https://raw.githubusercontent.com/PandaBoyNL/docker-logo-support/refs/heads/main/logo%20XXX.png</Icon>
+  <ExtraParams/>
+  <PostArgs/>
+  <CPUset/>
+  <DateInstalled>1791072513</DateInstalled>
+  <DonateText/>
+  <DonateLink/>
+  <Requires/>
+  <Config Name="WebUI Port" Target="5000" Default="5055" Mode="tcp" Description="De poort voor de Webinterface" Type="Port" Display="always" Required="true" Mask="false">5053</Config>
+  <Config Name="Video Map" Target="/videos" Default="/mnt/user/" Mode="rw" Description="De Unraid share waar je media in staat." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/</Config>
+  <Config Name="Discord Webhook" Target="DISCORD_WEBHOOK" Default="" Mode="" Description="Plak hier je Discord Webhook URL om notificaties te ontvangen. (Laat leeg als je dit niet wilt)" Type="Variable" Display="always" Required="false" Mask="false"></Config>
+  <TailscaleStateDir/>
+</Container>

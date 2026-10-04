@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <title>Video Converter ✨</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: #f0f0f0; display: flex; justify-content: center; padding: clamp(10px, 3vw, 40px); min-height: 100vh; }
+        .card { background: #1e1e24; padding: clamp(15px, 4vw, 30px); border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.5); border-top: 5px solid #ff7b00; width: 100%; max-width: 850px; display: flex; flex-direction: column; gap: 15px; }
+        
+        .header-container { display: flex; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; flex-wrap: wrap; gap: 15px; }
+        .header-logo { width: clamp(55px, 12vw, 85px); height: clamp(55px, 12vw, 85px); border-radius: 50%; box-shadow: 0 0 15px rgba(255,123,0,0.4); }
+        .header-container h2 { color: #ff9d00; font-size: clamp(22px, 5vw, 34px); text-shadow: 1px 1px 2px #000; }
+
+        label { font-weight: bold; color: #aaa; margin-top: 5px; display: inline-block; font-size: clamp(14px, 3vw, 16px); }
+        select { width: 100%; padding: clamp(12px, 2vw, 16px); border: 1px solid #444; border-radius: 6px; background-color: #2a2a35; color: white; font-size: clamp(14px, 3vw, 16px); cursor: pointer; margin-bottom: 10px;}
+        
+        .button-group { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 5px; }
+        button { flex: 1 1 200px; padding: clamp(12px, 2.5vw, 18px); border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: clamp(14px, 3vw, 16px); transition: all 0.2s; text-align: center; }
+        button:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        button:active { transform: translateY(1px); }
+        .btn-start { background: linear-gradient(45deg, #28a745, #218838); color: white; box-shadow: 0 4px 6px rgba(40, 167, 69, 0.3);}
+        .btn-stop { background: linear-gradient(45deg, #dc3545, #c82333); color: white; box-shadow: 0 4px 6px rgba(220, 53, 69, 0.3);}
+        
+        #file-browser { background: #111; border: 1px solid #333; border-radius: 6px; padding: 10px; height: clamp(180px, 25vh, 350px); overflow-y: auto; }
+        #current-path-display { font-family: monospace; font-size: clamp(12px, 2.5vw, 14px); color: #00c3ff; background: #222; padding: 10px; border-radius: 6px; border-left: 3px solid #00c3ff; word-wrap: break-word; }
+        .folder-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #2a2a35; display: flex; align-items: center; border-radius: 4px; transition: background 0.2s; font-size: clamp(14px, 3vw, 16px);}
+        .folder-item:hover { background: #2a2a35; }
+        .folder-icon { margin-right: 12px; font-size: clamp(18px, 4vw, 22px); }
+        .btn-up { background-color: #333; color: white; width: 100%; text-align: left; margin-bottom: 8px; padding: 10px; border-radius: 4px; flex: 1 1 100%;}
+        .btn-up:hover { background-color: #444; }
+        
+        #status-box { padding: 15px; background: #111; border-radius: 8px; border-left: 5px solid #00c3ff; word-wrap: break-word; font-size: clamp(13px, 3vw, 15px); }
+        #progress-bar { width: 100%; background-color: #222; border-radius: 6px; margin-top: 12px; overflow: hidden; height: clamp(12px, 2vw, 18px); box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);}
+        #progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #00c3ff, #00ff88); transition: width 0.3s ease; box-shadow: 0 0 10px rgba(0, 255, 136, 0.5); }
+        
+        #log-container { background: #111; border-radius: 8px; border-left: 5px solid #ff007f; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        #log-container h3 { margin: 0; color: #ff007f; font-size: clamp(15px, 3.5vw, 18px); }
+        #logbook { background: #050505; color: #00ff00; font-family: monospace; font-size: clamp(11px, 2.5vw, 14px); padding: 12px; height: clamp(150px, 22vh, 300px); overflow-y: auto; border-radius: 6px; border: 1px solid #333; line-height: 1.6; }
+
+        @media (max-width: 480px) {
+            .header-container { justify-content: center; text-align: center; flex-direction: column; }
+            .header-logo { margin: 0; }
+            .button-group { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="header-container">
+            <img src="/static/logo.png" alt="Logo" class="header-logo">
+            <h2>Video Converter</h2>
+        </div>
+        
+        <form id="convForm">
+            <label>📂 Selecteer de map met video's:</label>
+            <div id="current-path-display">/</div>
+            <div id="file-browser">
+                <button type="button" class="btn-up" onclick="goUp()">⬆️ Map omhoog</button>
+                <div id="folder-list"></div>
+            </div>
+            <input type="hidden" id="folder" name="folder" value="">
+            
+            <label>🎯 Kies Doel Formaat:</label>
+            <select id="target" name="target">
+                <option value="mp4" selected>MP4 (.mp4) 📱</option>
+                <option value="mkv">MKV (.mkv) 🎬</option>
+                <option value="avi">AVI (.avi) 📼</option>
+                <option value="mov">MOV (.mov) 🍎</option>
+                <option value="webm">WebM (.webm) 🌐</option>
+                <option value="mp3">MP3 Audio (.mp3) 🎵</option>
+            </select>
+            
+            <div class="button-group">
+                <button type="button" class="btn-start" onclick="start()">▶️ Start Conversie 🚀</button>
+                <button type="button" class="btn-stop" onclick="stop()">⏹️ Stop / Afbreken ❌</button>
+            </div>
+        </form>
+        
+        <div id="status-box">
+            <span id="status">Laden... ⏳</span>
+            <div id="progress-bar"><div id="progress-fill"></div></div>
+        </div>
+
+        <div id="log-container">
+            <h3>📝 Live Logboek</h3>
+            <div id="logbook"></div>
+        </div>
+    </div>
+    
+    <script>
+        let currentFolder = '';
+        function loadFolders(path) {
+            fetch('/api/folders?path=' + encodeURIComponent(path))
+                .then(r => r.json())
+                .then(data => {
+                    currentFolder = data.current_path;
+                    document.getElementById('current-path-display').innerText = '📍 Locatie: ' + (currentFolder ? '/' + currentFolder : '/ (Hoofdmap)');
+                    document.getElementById('folder').value = currentFolder;
+                    
+                    const list = document.getElementById('folder-list');
+                    list.innerHTML = '';
+                    if(data.folders.length === 0) {
+                        list.innerHTML = '<div style="padding: 10px; color: #888;"><i>Geen submappen gevonden 👻</i></div>';
+                    } else {
+                        data.folders.forEach(f => {
+                            const btn = document.createElement('div');
+                            btn.className = 'folder-item';
+                            btn.innerHTML = '<span class="folder-icon">📁</span> ' + f;
+                            btn.onclick = () => loadFolders(currentFolder ? currentFolder + '/' + f : f);
+                            list.appendChild(btn);
+                        });
+                    }
+                });
+        }
+        
+        function goUp() {
+            if (!currentFolder) return;
+            const parts = currentFolder.split('/'); parts.pop();
+            loadFolders(parts.join('/'));
+        }
+        
+        function start() { fetch('/start', {method:'POST', body: new FormData(document.getElementById('convForm'))}); }
+        function stop() { fetch('/stop', {method:'POST'}); }
+        
+        setInterval(() => { 
+            fetch('/status').then(r=>r.text()).then(text => {
+                document.getElementById('status').innerText = text;
+                const match = text.match(/\((\d+)\%\)/);
+                const bar = document.getElementById('progress-fill');
+                if(match) { bar.style.width = match[1] + '%'; } 
+                else if(text.includes("Klaar") || text.includes("Geen bestanden")) { bar.style.width = '100%'; } 
+                else { bar.style.width = '0%'; }
+            });
+            
+            fetch('/api/logs').then(r=>r.json()).then(logs => {
+                const logbook = document.getElementById('logbook');
+                const isScrolledToBottom = logbook.scrollHeight - logbook.clientHeight <= logbook.scrollTop + 5;
+                logbook.innerHTML = logs.join('<br>');
+                if(isScrolledToBottom) {
+                    logbook.scrollTop = logbook.scrollHeight;
+                }
+            });
+        }, 1000);
+
+        window.onload = () => loadFolders('');
+    </script>
+</body>
+</html>

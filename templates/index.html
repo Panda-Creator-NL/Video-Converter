@@ -10,9 +10,17 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: #f0f0f0; display: flex; justify-content: center; padding: clamp(10px, 3vw, 40px); min-height: 100vh; }
         .card { background: #1e1e24; padding: clamp(15px, 4vw, 30px); border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.5); border-top: 5px solid #ff7b00; width: 100%; max-width: 850px; display: flex; flex-direction: column; gap: 15px; }
         
-        .header-container { display: flex; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; flex-wrap: wrap; gap: 15px; }
+        .header-container { display: flex; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; flex-wrap: wrap; gap: 15px; justify-content: space-between; }
+        .header-left { display: flex; align-items: center; gap: 15px; }
         .header-logo { width: clamp(55px, 12vw, 85px); height: clamp(55px, 12vw, 85px); border-radius: 50%; box-shadow: 0 0 15px rgba(255,123,0,0.4); }
         .header-container h2 { color: #ff9d00; font-size: clamp(22px, 5vw, 34px); text-shadow: 1px 1px 2px #000; }
+        
+        .header-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+        .header-btn { padding: 8px 14px; border-radius: 6px; font-weight: bold; font-size: clamp(12px, 2.5vw, 14px); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; color: white; cursor: pointer; border: none; }
+        .btn-contact { background-color: #333; border: 1px solid #553; }
+        .btn-contact:hover { background-color: #444; }
+        .btn-coffee { background: linear-gradient(45deg, #ff8100, #ffb300); color: #121212; }
+        .btn-coffee:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
         label { font-weight: bold; color: #aaa; margin-top: 5px; display: inline-block; font-size: clamp(14px, 3vw, 16px); }
         select { width: 100%; padding: clamp(12px, 2vw, 16px); border: 1px solid #444; border-radius: 6px; background-color: #2a2a35; color: white; font-size: clamp(14px, 3vw, 16px); cursor: pointer; margin-bottom: 10px;}
@@ -42,7 +50,8 @@
 
         @media (max-width: 480px) {
             .header-container { justify-content: center; text-align: center; flex-direction: column; }
-            .header-logo { margin: 0; }
+            .header-left { justify-content: center; flex-direction: column; }
+            .header-buttons { justify-content: center; width: 100%; }
             .button-group { flex-direction: column; }
         }
     </style>
@@ -50,8 +59,14 @@
 <body>
     <div class="card">
         <div class="header-container">
-            <img src="/static/logo.png" alt="Logo" class="header-logo">
-            <h2>Video Converter</h2>
+            <div class="header-left">
+                <img src="/static/logo.png" alt="Logo" class="header-logo">
+                <h2>Video Converter</h2>
+            </div>
+            <div class="header-buttons">
+                <a href="https://panda-creator-support-page.duckdns.org/" target="_blank" class="header-btn btn-contact">✉️ Contact</a>
+                <a href="https://www.paypal.com/paypalme/PandaBoyNL" target="_blank" class="header-btn btn-coffee">☕ Buy me a coffee</a>
+            </div>
         </div>
         
         <form id="convForm">
